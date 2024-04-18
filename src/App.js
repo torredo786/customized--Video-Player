@@ -168,6 +168,7 @@ function App() {
     played: 0,
     duration: 0,
     playbackRate: 1.0,
+    qualityRate: "360p",
     volume: 1,
     loop: false,
     seeking: false,
@@ -181,10 +182,10 @@ function App() {
     playing,
     controls,
     light,
-
     muted,
     loop,
     playbackRate,
+    qualityRate,
     pip,
     played,
     seeking,
@@ -272,6 +273,10 @@ function App() {
   const handlePlaybackRate = (rate) => {
     setState({ ...state, playbackRate: rate });
   };
+
+  const handleQualitySwitch = (rate) =>{
+    setState({ ...state, qualityRate: rate });
+  }
 
   const hanldeMute = () => {
     setState({ ...state, muted: !state.muted });
@@ -374,6 +379,8 @@ function App() {
             onChangeDispayFormat={handleDisplayFormat}
             playbackRate={playbackRate}
             onPlaybackRateChange={handlePlaybackRate}
+            qualityRate={qualityRate}
+            handleQualitySwitch={handleQualitySwitch}
             onToggleFullScreen={toggleFullScreen}
             volume={volume}
             onBookmark={addBookmark}

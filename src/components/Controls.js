@@ -17,6 +17,8 @@ import VolumeDown from "@material-ui/icons/VolumeDown";
 import VolumeMute from "@material-ui/icons/VolumeOff";
 import FullScreen from "@material-ui/icons/Fullscreen";
 import Popover from "@material-ui/core/Popover";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme) => ({
   controlsWrapper: {
@@ -118,6 +120,8 @@ const Controls = forwardRef(
       onChangeDispayFormat,
       playbackRate,
       onPlaybackRateChange,
+      qualityRate,
+      handleQualitySwitch,
       onToggleFullScreen,
       volume,
       onVolumeChange,
@@ -127,6 +131,8 @@ const Controls = forwardRef(
   ) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [quality, setQuality] = React.useState(null);
+
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
@@ -134,9 +140,17 @@ const Controls = forwardRef(
     const handleClose = () => {
       setAnchorEl(null);
     };
+    const handleQualityClick = (event) => {
+      setQuality(event.currentTarget);
+    };
+
+    const handleQualityClose = () => {
+      setQuality(null);
+    };
 
     const open = Boolean(anchorEl);
-    const id = open ? "simple-popover" : undefined;
+    const qualityOpen = Boolean(quality);
+    const id = (open || qualityOpen) ? "simple-popover" : undefined;
 
     return (
       <div ref={ref} className={classes.controlsWrapper}>
@@ -323,11 +337,49 @@ const Controls = forwardRef(
                 </Grid>
               </Popover>
               <IconButton
+                onClick={handleQualityClick}
+                className={classes.bottomIcons}
+              >
+                <FontAwesomeIcon icon={faCog} />
+              </IconButton>
+              <Popover
+                container={ref.current}
+                open={qualityOpen}
+                id={id}
+                onClose={handleQualityClose}
+                anchorEl={quality}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+              >
+                <Grid container direction="column-reverse">
+                  {["1080p", "720p", "480p", "360p", "144p", "auto"].map((rate) => (
+                    <Button
+                      key={rate}
+                      //   onClick={() => setState({ ...state, playbackRate: rate })}
+                      onClick={() => handleQualitySwitch(rate)}
+                      variant="text"
+                    >
+                      <Typography
+                        color={rate === qualityRate ? "secondary" : "inherit"}
+                      >
+                        {rate}
+                      </Typography>
+                    </Button>
+                  ))}
+                </Grid>
+              </Popover>
+              <IconButton
                 onClick={onToggleFullScreen}
                 className={classes.bottomIcons}
               >
                 <FullScreen fontSize="large" />
-              </IconButton>
+              </IconButton>  
             </Grid>
           </Grid>
         </Grid>
@@ -347,6 +399,7 @@ Controls.propTypes = {
   onVolumeSeekDown: PropTypes.func,
   onChangeDispayFormat: PropTypes.func,
   onPlaybackRateChange: PropTypes.func,
+  handleQualitySwitch: PropTypes.func,
   onToggleFullScreen: PropTypes.func,
   onMute: PropTypes.func,
   playing: PropTypes.bool,
